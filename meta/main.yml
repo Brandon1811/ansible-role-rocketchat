@@ -1,0 +1,12 @@
+---
+dependencies: []
+
+galaxy_info:
+  author: "Brandon Shipley"
+  description: "Ansible role to install/run rocket chat via docker-compose on a hardened Ubuntu 20.04 server"
+  company: "none"
+  license: MIT
+  min_anisble_version: 2.9
+  role_name: ansible-rocketchat-role
+  galaxy_tags: 
+    - rocketchat

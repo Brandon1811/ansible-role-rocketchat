@@ -1,0 +1,26 @@
+---
+
+# install docker using geerlingguy docker role
+- name: 'Use geerlingguy.docker role'
+  include_role:
+    name: ansible-role-docker
+  tags: docker
+
+- name: 'Use geerlingguy.pip role to install docker via pip'
+  vars:
+    pip_install_packages:
+      - name: docker
+      - name: docker-compose
+
+  include_role:
+    name: ansible-role-pip
+  tags: docker
+
+- name: Add adminstrator to docker group
+  user:
+    name: "{{ main_user }}"
+    groups: docker
+    append: yes
+
+- name: reset ssh connection to allow user changes to affect 'current login user'
+  meta: reset_connection
