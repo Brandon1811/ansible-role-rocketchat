@@ -13,7 +13,7 @@
     - '443'
     - '22'
 
-- name: Creates directory structure for assetto content
+- name: Creates directory structure for rocketchat content
   file:
     path: /home/{{ main_user }}/rocketchat/data
     state: directory
@@ -21,6 +21,12 @@
     group: "{{ main_user }}"
     mode: 0775
 
+- name: copy docker compose to server
+  become_user: "{{ main_user }}"
+  copy:
+    src: rocketchat/docker_compose.yml
+    dest: /home/{{ main_user }}/rocketchat/
+    
 - name: bring down rocketchat docker-compose
   become_user: "{{ main_user }}"
   docker_compose:
