@@ -24,9 +24,9 @@
 - name: copy docker compose to server
   become_user: "{{ main_user }}"
   copy:
-    src: rocketchat/docker_compose.yml
+    src: files/docker_compose.yml
     dest: /home/{{ main_user }}/rocketchat/
-    
+
 - name: bring down rocketchat docker-compose
   become_user: "{{ main_user }}"
   docker_compose:
