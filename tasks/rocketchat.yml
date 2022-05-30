@@ -13,9 +13,17 @@
     - '443'
     - '22'
 
-- name: Creates directory structure for rocketchat content
+- name: Creates directory structure for rocketchat data
   file:
     path: /home/{{ main_user }}/rocketchat/data
+    state: directory
+    owner: "{{ main_user }}"
+    group: "{{ main_user }}"
+    mode: 0775
+
+- name: Creates directory structure for nginx data
+  file:
+    path: /home/{{ main_user }}/rocketchat/nginx
     state: directory
     owner: "{{ main_user }}"
     group: "{{ main_user }}"
