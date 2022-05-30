@@ -15,18 +15,18 @@
 
 - name: Creates directory structure for assetto content
   file:
-    path: /home/{{ main_user }}/data
+    path: /home/{{ main_user }}/rocketchat/data
     state: directory
     owner: "{{ main_user }}"
     group: "{{ main_user }}"
     mode: 0775
 
-- name: bring down server-manager docker-compose
+- name: bring down rocketchat docker-compose
   become_user: "{{ main_user }}"
   docker_compose:
-    project_src: /home/{{ main_user }}/server-manager/
+    project_src: /home/{{ main_user }}/rocketchat/
     state: absent
-  register: __remove_assetto_server_manager
+  register: __remove_rocketchat
   tags:
     - bring-down
 
@@ -39,17 +39,22 @@
     group: "{{ main_user }}"
     mode: 0775
 
+- name: setup nginx reverse proxy from template
+  template:
+    src: templates/rocketchat/nginx.conf.j2
+    dest: /home/{{ main_user }}/rocketchat/nginx/nginx.conf
+
 - name: docker compose up
   become_user: "{{ main_user }}"
   docker_compose:
-    project_src: /home/{{ main_user }}/server-manager/
+    project_src: /home/{{ main_user }}/rocketchat/
     state: present
-  register: __assetto_server_manager
+  register: __rocketchat
 
 - name: debug docker compose down
   debug:
-    var: __remove_assetto_server_manager
+    var: __remove_rocketchat
 
-- name: debug docker compose up
+- name: debug docker compose up debug
   debug:
-    var: __assetto_server_manager
+    var: __rocketchat
