@@ -47,7 +47,7 @@
 
 - name: setup nginx reverse proxy from template
   template:
-    src: templates/rocketchat/nginx.conf.j2
+    src: templates/nginx.conf.j2
     dest: /home/{{ main_user }}/rocketchat/nginx/nginx.conf
 
 - name: docker compose up
