@@ -4,6 +4,7 @@
   apt: name=unzip state=latest update_cache=yes force_apt_get=yes
 
 - name: "NOTSCORED | 3.5.1.6 | PATCH | Ensure firewall rules exist for all open ports"
+  become: true
   ufw:
     rule: allow
     proto: tcp
@@ -46,6 +47,7 @@
     - bring-down
 
 - name: update permissions
+  become: true
   file:
     path: /home/{{ main_user }}
     state: directory
