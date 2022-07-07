@@ -3,9 +3,8 @@
 - include: ssh_port_fallback.yml
 - include: harden.yml
 #  become: true
-#  apply tags,become
-#  when: harden_os
-#  tags: harden
+  when: harden_os
+  tags: harden
 
 - include: docker.yml
 #  become: true
