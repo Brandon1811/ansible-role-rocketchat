@@ -3,7 +3,7 @@ version: '2'
 services:
   rocketchat:
 #    image: registry.rocket.chat/rocketchat/rocket.chat:latest
-    image: rocketchat/rocket.chat:4.0
+    image: rocket.chat:4.0
     command: >
       bash -c
         "for i in `seq 1 30`; do
