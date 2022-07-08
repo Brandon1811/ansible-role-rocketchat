@@ -90,7 +90,7 @@
     var: ansible_date_time
 
 - name: Backup existing RocketChat mongo database
-  when:
+  when: backup_db
   community.docker.docker_container_exec:
     container: mongo
   command: mongodump --archive=/dump/{{ ansible_date_time.iso8601 }} --gzip
