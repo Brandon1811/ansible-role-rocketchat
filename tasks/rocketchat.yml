@@ -117,7 +117,7 @@
   when: backup_db and not __backup_result.failed
   ansible.builtin.fetch:
     src: /home/{{ main_user }}/backups/{{ ansible_date_time.iso8601 }}.gzip
-    dest: {{ local_backup_dir }}
+    dest: "{{ local_backup_dir }}"
 
 - name: debug docker compose down
   debug:
