@@ -123,7 +123,7 @@
   tags: mongodump
 
 - name: Set feature compability version if we are upgrading mongoDB
-  when: prev_mongo_version and prev_mongo_version != mongo_version
+  when: prev_mongo_version and set_feature_compat_version
   community.docker.docker_container_exec:
     container: rocketchat_mongo_1
     command: >
