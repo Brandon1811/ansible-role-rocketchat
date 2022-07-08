@@ -109,7 +109,7 @@
 - name: Copy backup we just took to home/{{ main_user }}/backups
   when: backup_db and not __backup_result.failed
   ansible.builtin.copy:
-    src: /home/{{ main_user }}/rocketchat/dump/{{ ansible_date_time.iso8601 }}
+    src: /home/{{ main_user }}/rocketchat/data/dump/{{ ansible_date_time.iso8601 }}
     dest: /home/{{ main_user }}/backups/{{ ansible_date_time.iso8601 }}.gzip
     remote_src: yes
 
