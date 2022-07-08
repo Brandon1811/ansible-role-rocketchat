@@ -151,7 +151,7 @@
 
 
 - name: debug mongo upgrade set feature compatability version
-  when: prev_mongo_version and prev_mongo_version != mongo_version
+  when: set_feature_compat_version
   debug:
     var: __set_feature_compability_version_mongo
   tags: mongoupgrade
