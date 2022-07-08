@@ -93,8 +93,8 @@
   when: backup_db
   community.docker.docker_container_exec:
     container: mongo
-  command: mongodump --archive=/dump/{{ ansible_date_time.iso8601 }} --gzip
-  chdir: /home/{{ main_user }}/rocketchat
+    command: mongodump --archive=/dump/{{ ansible_date_time.iso8601 }} --gzip
+    chdir: /home/{{ main_user }}/rocketchat
   register: __backup_result
 
 - name: debug docker compose down
