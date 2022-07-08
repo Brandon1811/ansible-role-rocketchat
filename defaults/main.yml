@@ -6,10 +6,10 @@ harden_os: true
 rc_version: 4.8.1
 
 # WIP to get to 5.0
-mongo_version: 4.2
+mongo_version: 5.0
 
 # WIP to get to 5.0
-prev_mongo_version: 4.2
+prev_mongo_version: 5.0
 
 # if true set feature compability version to prev_mongo_version
 set_feature_compat_version: true
