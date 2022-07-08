@@ -1,9 +1,5 @@
 ---
-- name: Install unzip using apt
-  become: true
-  apt: name=unzip state=latest update_cache=yes force_apt_get=yes
-
-- name: "NOTSCORED | 3.5.1.6 | PATCH | Ensure firewall rules exist for all open ports"
+- name: "Open ports for RocketChat"
   become: true
   ufw:
     rule: allow
@@ -31,17 +27,46 @@
     group: "{{ main_user }}"
     mode: 0775
 
-- name: copy docker compose to server
-  become_user: "{{ main_user }}"
-  copy:
-    src: files/docker-compose.yml
-    dest: /home/{{ main_user }}/rocketchat/
+- name: Creates directory structure for upload data
+  become: true
+  file:
+    path: /home/{{ main_user }}/rocketchat/uploads
+    state: directory
+    owner: "{{ main_user }}"
+    group: "{{ main_user }}"
+    mode: 0775
+
+- name: Creates backup directory outside of docker volumes to move dumps more easily off of server
+  file:
+    path: /home/{{ main_user }}/backups
+    state: directory
+    owner: "{{ main_user }}"
+    group: "{{ main_user }}"
+    mode: 0775
+
+- name: Ensure mmap to wiredTiger mongoDB repo checkout exists
+  ansible.builtin.git:
+    repo: 'https://github.com/RocketChat/docker-mmap-to-wiredtiger-migration.git'
+    dest: /home/{{ main_user }}/rocketchat/rocketchat-migration
+    update: no
+
+- name: Copy docker folder from mmap to wiredTiger mongoDB migration repo
+  ansible.builtin.copy:
+    src: /home/{{ main_user }}/rocketchat/rocketchat-migration/docker
+    dest: /home/{{ main_user }}/rocketchat/docker
+    remote_src: yes
+
+- name: copy docker compose to server (from template)
+  template:
+    src: templates/docker-compose.yml.j2
+    dest: /home/{{ main_user }}/rocketchat/docker-compose.yml
 
 - name: bring down rocketchat docker-compose
   become_user: "{{ main_user }}"
   docker_compose:
     project_src: /home/{{ main_user }}/rocketchat/
     state: absent
+    remove_orphans: true
   register: __remove_rocketchat
   tags:
     - bring-down
@@ -68,10 +93,65 @@
     state: present
   register: __rocketchat
 
+- name: Get the current datetime
+  debug:
+    var: ansible_date_time
+
+- name: Backup existing RocketChat mongo database
+  when: backup_db
+  community.docker.docker_container_exec:
+    container: rocketchat_mongo_1
+    command: mongodump --archive=/dump/{{ ansible_date_time.iso8601 }} --gzip
+  #    chdir: /home/{{ main_user }}/rocketchat
+  #    chdir: /
+  register: __backup_result
+  tags: mongodump
+
+- name: Copy backup we just took to home/{{ main_user }}/backups
+  when: backup_db and not __backup_result.failed
+  ansible.builtin.copy:
+    src: /home/{{ main_user }}/rocketchat/data/dump/{{ ansible_date_time.iso8601 }}
+    dest: /home/{{ main_user }}/backups/{{ ansible_date_time.iso8601 }}.gzip
+    remote_src: yes
+  tags: mongodump
+
+- name: Pull newly created mongodump into local backups directory
+  when: backup_db and not __backup_result.failed
+  ansible.builtin.fetch:
+    src: /home/{{ main_user }}/backups/{{ ansible_date_time.iso8601 }}.gzip
+    dest: "{{ local_backup_dir }}"
+  tags: mongodump
+
+- name: Set feature compability version if we are upgrading mongoDB
+  when: set_feature_compat_version
+  community.docker.docker_container_exec:
+    container: rocketchat_mongo_1
+    command: >
+      bash -c 'mongo --eval "db.adminCommand( { setFeatureCompatibilityVersion: \"{{ prev_mongo_version }}\" } )"'
+  #    chdir: /home/{{ main_user }}/rocketchat
+  #    chdir: /
+  #docker-compose exec mongo
+  register: __set_feature_compability_version_mongo
+  tags: mongoupgrade
+
 - name: debug docker compose down
   debug:
     var: __remove_rocketchat
+  tags: bring-down
 
 - name: debug docker compose up debug
   debug:
     var: __rocketchat
+
+- name: debug mongo backup
+  when: backup_db
+  debug:
+    var: __backup_result
+  tags: mongodump
+
+
+- name: debug mongo upgrade set feature compatability version
+  when: set_feature_compat_version
+  debug:
+    var: __set_feature_compability_version_mongo
+  tags: mongoupgrade
