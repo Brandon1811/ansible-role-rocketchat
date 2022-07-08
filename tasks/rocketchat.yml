@@ -92,7 +92,7 @@
 - name: Backup existing RocketChat mongo database
   when: backup_db
   community.docker.docker_container_exec:
-    container: rocketchat_mongo
+    container: rocketchat_mongo_1
     command: mongodump --archive=/dump/{{ ansible_date_time.iso8601 }} --gzip
     chdir: /home/{{ main_user }}/rocketchat
   register: __backup_result
