@@ -32,6 +32,7 @@
     mode: 0775
 
 - name: Creates directory structure for upload data
+  become: true
   file:
     path: /home/{{ main_user }}/rocketchat/uploads
     state: directory
