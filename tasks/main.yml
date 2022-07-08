@@ -10,7 +10,7 @@
 #  become: true
 #  apply tags,become
 #  when: harden_os
-#  tags: harden
+  tags: install-docker
 
 - include: rocketchat.yml
 #  become: true
