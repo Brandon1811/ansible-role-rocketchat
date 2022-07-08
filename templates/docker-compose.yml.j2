@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   rocketchat:
-    image: rocket.chat:4.0.3
+    image: rocket.chat:{{ rc_version }}
     command: >
       bash -c
         "for (( ; ; )); do

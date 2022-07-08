@@ -52,17 +52,17 @@
     dest: /home/{{ main_user }}/rocketchat/docker
     remote_src: yes
 
-- name: copy docker compose to server
-  become_user: "{{ main_user }}"
-  copy:
-    src: files/docker-compose.yml
-    dest: /home/{{ main_user }}/rocketchat/
+- name: copy docker compose to server (from template)
+  template:
+    src: templates/docker-compose.yml.j2
+    dest: /home/{{ main_user }}/rocketchat/docker-compose.yml
 
 - name: bring down rocketchat docker-compose
   become_user: "{{ main_user }}"
   docker_compose:
     project_src: /home/{{ main_user }}/rocketchat/
     state: absent
+    remove_orphans: true
   register: __remove_rocketchat
   tags:
     - bring-down
