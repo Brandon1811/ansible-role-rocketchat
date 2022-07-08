@@ -40,6 +40,18 @@
     group: "{{ main_user }}"
     mode: 0775
 
+- name: Ensure mmap to wiredTiger mongoDB repo checkout exists
+  ansible.builtin.git:
+    repo: 'https://github.com/RocketChat/docker-mmap-to-wiredtiger-migration.git'
+    dest: /home/{{ main_user }}/rocketchat/rocketchat-migration
+    update: no
+
+- name: Copy docker folder from mmap to wiredTiger mongoDB migration repo
+  ansible.builtin.copy:
+    src: /home/{{ main_user }}/rocketchat/rocketchat-migration/docker
+    dest: /home/{{ main_user }}/rocketchat/docker
+    remote_src: yes
+
 - name: copy docker compose to server
   become_user: "{{ main_user }}"
   copy:
