@@ -36,6 +36,14 @@
     group: "{{ main_user }}"
     mode: 0775
 
+- name: Creates backup directory outside of docker volumes to move dumps more easily off of server
+  file:
+    path: /home/{{ main_user }}/backups
+    state: directory
+    owner: "{{ main_user }}"
+    group: "{{ main_user }}"
+    mode: 0775
+
 - name: Ensure mmap to wiredTiger mongoDB repo checkout exists
   ansible.builtin.git:
     repo: 'https://github.com/RocketChat/docker-mmap-to-wiredtiger-migration.git'
@@ -98,6 +106,19 @@
   #    chdir: /
   register: __backup_result
 
+- name: Copy backup we just took to home/{{ main_user }}/backups
+  when: backup_db and not __backup_result.failed
+  ansible.builtin.copy:
+    src: /dump/{{ ansible_date_time.iso8601 }}
+    dest: /home/{{ main_user }}/backups/{{ ansible_date_time.iso8601 }}.gzip
+    remote_src: yes
+
+- name: Pull newly created mongodump into local backups directory
+  when: backup_db and not __backup_result.failed
+  ansible.builtin.fetch:
+    src: /home/{{ main_user }}/backups/{{ ansible_date_time.iso8601 }}.gzip
+    dest: {{ local_backup_dir }}
+
 - name: debug docker compose down
   debug:
     var: __remove_rocketchat
@@ -107,5 +128,6 @@
     var: __rocketchat
 
 - name: debug mongo backup
+  when: backup_db
   debug:
     var: __backup_result
