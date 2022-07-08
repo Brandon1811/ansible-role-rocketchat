@@ -1,9 +1,5 @@
 ---
-- name: Install unzip using apt
-  become: true
-  apt: name=unzip state=latest update_cache=yes force_apt_get=yes
-
-- name: "NOTSCORED | 3.5.1.6 | PATCH | Ensure firewall rules exist for all open ports"
+- name: "Open ports for RocketChat"
   become: true
   ufw:
     rule: allow
@@ -44,7 +40,7 @@
   ansible.builtin.git:
     repo: 'https://github.com/RocketChat/docker-mmap-to-wiredtiger-migration.git'
     dest: /home/{{ main_user }}/rocketchat/rocketchat-migration
-    update: no
+    update: yes
 
 - name: Copy docker folder from mmap to wiredTiger mongoDB migration repo
   ansible.builtin.copy:
@@ -89,6 +85,18 @@
     state: present
   register: __rocketchat
 
+- name: Get the current datetime
+  debug:
+    var: ansible_date_time
+
+- name: Backup existing RocketChat mongo database
+  when:
+  community.docker.docker_container_exec:
+    container: mongo
+  command: mongodump --archive=/dump/{{ ansible_date_time.iso8601 }} --gzip
+  chdir: /home/{{ main_user }}/rocketchat
+  register: __backup_result
+
 - name: debug docker compose down
   debug:
     var: __remove_rocketchat
@@ -96,3 +104,7 @@
 - name: debug docker compose up debug
   debug:
     var: __rocketchat
+
+- name: debug mongo backup
+  debug:
+    var: __backup_result
