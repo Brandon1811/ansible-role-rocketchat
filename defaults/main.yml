@@ -8,5 +8,8 @@ rc_version: 4.8.1
 # WIP to get to 5.0
 mongo_version: 4.4
 
+# WIP to get to 5.0 - if same as mongo_version or false, feature compatibility version will not be set
+prev_mongo_version: 4.2
+
 # backup by default - saves to /home/{{ main_user }}/rocketchat/data/dump/2015-07-09T16:59:26Z" (iso8601 of current date)
 backup_db: true

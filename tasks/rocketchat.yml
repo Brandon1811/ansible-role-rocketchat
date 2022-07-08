@@ -122,9 +122,22 @@
     dest: "{{ local_backup_dir }}"
   tags: mongodump
 
+- name: Set feature compability version if we are upgrading mongoDB
+  when: prev_mongo_version and prev_mongo_version != mongo_version
+  community.docker.docker_container_exec:
+    container: rocketchat_mongo_1
+    command: >
+      bash -c 'mongo --eval "db.adminCommand( { setFeatureCompatibilityVersion: \"{{ prev_mongo_version }}\" } )"'
+  #    chdir: /home/{{ main_user }}/rocketchat
+  #    chdir: /
+  #docker-compose exec mongo
+  register: __set_feature_compability_version_mongo
+  tags: mongoupgrade
+
 - name: debug docker compose down
   debug:
     var: __remove_rocketchat
+  tags: bring-down
 
 - name: debug docker compose up debug
   debug:
@@ -135,3 +148,10 @@
   debug:
     var: __backup_result
   tags: mongodump
+
+
+- name: debug mongo upgrade set feature compatability version
+  when: prev_mongo_version and prev_mongo_version != mongo_version
+  debug:
+    var: __set_feature_compability_version_mongo
+  tags: mongoupgrade
