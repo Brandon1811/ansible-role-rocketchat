@@ -31,6 +31,14 @@
     group: "{{ main_user }}"
     mode: 0775
 
+- name: Creates directory structure for upload data
+  file:
+    path: /home/{{ main_user }}/rocketchat/uploads
+    state: directory
+    owner: "{{ main_user }}"
+    group: "{{ main_user }}"
+    mode: 0775
+
 - name: copy docker compose to server
   become_user: "{{ main_user }}"
   copy:
