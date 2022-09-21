@@ -53,7 +53,7 @@
 - name: Copy docker folder from mmap to wiredTiger mongoDB migration repo
   ansible.builtin.copy:
     src: /home/{{ main_user }}/rocketchat/rocketchat-migration/docker
-    dest: /home/{{ main_user }}/rocketchat/docker
+    dest: /home/{{ main_user }}/rocketchat
     remote_src: yes
 
 - name: copy docker compose to server (from template)
