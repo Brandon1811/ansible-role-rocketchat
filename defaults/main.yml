@@ -1,18 +1,11 @@
 ---
-# harden by default
-harden_os: true
 
-# latest as of 7/7/2022
-rc_version: 4.8.1
-
-# WIP to get to 5.0
+# latest as of 9/12/2022
+rc_version: 5.1.2
 mongo_version: 5.0
-
-# WIP to get to 5.0
 prev_mongo_version: 5.0
 
 # if true set feature compability version to prev_mongo_version
-set_feature_compat_version: true
-
+set_feature_compat_version: false
 # backup by default - saves to /home/{{ main_user }}/rocketchat/data/dump/2015-07-09T16:59:26Z" (iso8601 of current date)
-backup_db: true
+backup_db: false
