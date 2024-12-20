@@ -122,7 +122,7 @@
     dest: "{{ local_backup_dir }}"
   tags: mongodump
 
-- name: Set feature compability version if we are upgrading mongoDB
+- name: Set feature compatibility version if we are upgrading mongoDB
   when: set_feature_compat_version
   community.docker.docker_container_exec:
     container: rocketchat_mongo_1
@@ -131,7 +131,7 @@
   #    chdir: /home/{{ main_user }}/rocketchat
   #    chdir: /
   #docker-compose exec mongo
-  register: __set_feature_compability_version_mongo
+  register: __set_feature_compatibility_version_mongo
   tags: mongoupgrade
 
 - name: debug docker compose down

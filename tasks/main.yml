@@ -1,7 +1,12 @@
 ---
 # tasks file for setting up a rocketchat server on ubuntu20.04
 
-- include: docker.yml
+- name: Include docker.yml task list
+  ansible.builtin.import_tasks:
+    file: docker.yml
   tags: install-docker
 
-- include: rocketchat.yml
+- name: Include rocketchat.yml task list
+  ansible.builtin.import_tasks:
+    file: rocketchat.yml
+  tags: rocketchat
