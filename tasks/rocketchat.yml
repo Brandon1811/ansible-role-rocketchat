@@ -63,7 +63,7 @@
 
 - name: bring down rocketchat docker-compose
   become_user: "{{ main_user }}"
-  docker_compose:
+  community.docker.docker_compose_v2:
     project_src: /home/{{ main_user }}/rocketchat/
     state: absent
     remove_orphans: true
@@ -88,7 +88,7 @@
 
 - name: docker compose up
   become_user: "{{ main_user }}"
-  docker_compose:
+  community.docker.docker_compose_v2:
     project_src: /home/{{ main_user }}/rocketchat/
     state: present
   register: __rocketchat
